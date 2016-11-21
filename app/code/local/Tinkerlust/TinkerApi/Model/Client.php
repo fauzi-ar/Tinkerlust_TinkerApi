@@ -85,17 +85,31 @@
 
 	    public function getRefreshToken($refresh_token)
 	    {
-	    	die('getrefreshtoken');
+	    	$new_refresh_token = Mage::getModel('tinkerapi/refresh')->load($refresh_token);
+		    
+		    if ($new_refresh_token->getData('refresh_token') != null){
+		    	$new_refresh_token->setData('expires',strtotime($new_refresh_token->getData('expires')) );
+		    	return $new_refresh_token;
+		    }
+		    else {
+		    	return false;
+		    }
 	    }
 
 	    public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = null)
 	    {
-	    	echo('setrefreshtoken');
+	    	$refreshModel = Mage::getModel('tinkerapi/refresh');
+			$data = array('refresh_token' => $refresh_token,'client_id'=>$client_id,'user_id'=>$user_id,'expires' => $expires, 'scope' => $scope); 
+			$refreshModel->setData($data);
+			$refreshModel->save();
+		    return true;
 	    }
 
 	    public function unsetRefreshToken($refresh_token)
 	    {
-	    	die('unsetrefreshtoken');
+	    	$refreshModel = Mage::getModel('tinkerapi/refresh')->load($refresh_token);
+			$refreshModel->delete();
+		    return true;
 	    }
 
 	}
