@@ -79,8 +79,8 @@ class OAuth2_Server implements OAuth2_Controller_ResourceControllerInterface,
             'use_jwt_access_tokens'        => false,
             'store_encrypted_token_string' => true,
             'use_openid_connect'       => false,
-            'id_lifetime'              => 3600,
-            'access_lifetime'          => 3600,
+            'id_lifetime'              => 86400,
+            'access_lifetime'          => 86400,
             'www_realm'                => 'Service',
             'token_param_name'         => 'access_token',
             'token_bearer_header_name' => 'Bearer',
@@ -314,7 +314,6 @@ class OAuth2_Server implements OAuth2_Controller_ResourceControllerInterface,
     {
         $this->response = is_null($response) ? new OAuth2_Response() : $response;
         $value = $this->getAuthorizeController()->validateAuthorizeRequest($request, $this->response);
-
         return $value;
     }
 
@@ -322,7 +321,6 @@ class OAuth2_Server implements OAuth2_Controller_ResourceControllerInterface,
     {
         $this->response = is_null($response) ? new OAuth2_Response() : $response;
         $value = $this->getResourceController()->verifyResourceRequest($request, $this->response, $scope);
-
         return $value;
     }
 

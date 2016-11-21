@@ -1,15 +1,10 @@
 <?php
 
-namespace OAuth2\GrantType;
-
-use OAuth2\RequestInterface;
-use OAuth2\ResponseInterface;
-
 /**
  *
  * @author Brent Shaffer <bshafs at gmail dot com>
  */
-class UserCredentials implements GrantTypeInterface
+class OAuth2_GrantType_UserCredentials implements OAuth2_GrantType_GrantTypeInterface
 {
     private $userInfo;
 

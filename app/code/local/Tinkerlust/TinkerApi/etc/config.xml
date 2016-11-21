@@ -15,13 +15,19 @@
 				<class>Tinkerlust_TinkerApi_Model_Resource</class>
 				<entities>
 					<client>
-						<table>tinkerlust_tinkerapi_oauth2client</table>
+						<table>tinkerlust_oauth2_clients</table>
 					</client>
+					<token>
+						<table>tinkerlust_oauth2_accesstokens</table>
+					</token>
+					<refresh>
+						<table>tinkerlust_oauth2_refreshtokens</table>
+					</refresh>
 				</entities>
 			</tinkerapi_resource>
 		</models>
 		<resources>
-			<client_setup>
+			<oauth2_setup>
 				<setup>
 					<module>Tinkerlust_TinkerApi</module>
 					<class>Tinkerlust_TinkerApi_Model_Resource_Setup</class>
@@ -29,17 +35,17 @@
 				<connection>
 					<use>core_setup</use>
 				</connection>
-			</client_setup>
-			<client_write>
+			</oauth2_setup>
+			<oauth2_write>
 				<connection>
 					<use>core_write</use>
 				</connection>
-			</client_write>
-			<client_read>
+			</oauth2_write>
+			<oauth2_read>
 				<connection>
 					<use>core_read</use>
 				</connection>
-			</client_read>
+			</oauth2_read>
 		</resources>
 	</global>
 	<frontend>

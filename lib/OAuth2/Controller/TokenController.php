@@ -186,7 +186,6 @@ class OAuth2_Controller_TokenController implements OAuth2_Controller_TokenContro
 
             $requestedScope = $defaultScope;
         }
-
         return $grantType->createAccessToken($this->accessToken, $clientId, $grantType->getUserId(), $requestedScope);
     }
 
