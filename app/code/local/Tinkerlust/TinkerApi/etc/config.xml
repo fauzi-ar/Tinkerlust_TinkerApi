@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Tinkerlust_TinkerApi>
-			<version>0.1.0</version>
+			<version>0.3.0</version>
 		</Tinkerlust_TinkerApi>
 	</modules>
 	<global>
