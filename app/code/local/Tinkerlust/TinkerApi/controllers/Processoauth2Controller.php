@@ -18,6 +18,13 @@
 			$this->_server->addGrantType(new OAuth2_GrantType_UserCredentials($this->_storage));
 			$this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->send();
 		}
+		public function registerAction(){
+			$this->_server->addGrantType(new OAuth2_GrantType_ClientCredentials($this->_storage,['access_lifetime' => 60,'id_lifetime' => 60]));
+			$result = $this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->getParameters();
+			if (isset($result['access_token'])){
+				echo $result['access_token'];
+			}
+		}
 		public function refreshAction(){
 			$this->_server->addGrantType(new OAuth2_GrantType_RefreshToken($this->_storage,['always_issue_new_refresh_token' => true]));
 			$this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->send();
@@ -32,12 +39,7 @@
 			else {
 				$token = $this->_server->getAccessTokenData(OAuth2_Request::createFromGlobals());
 				$user_id = $token['user_id'];
-				$customer = Mage::getModel('customer/customer');
-				$customer->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
-				$customer->load($user_id);
-
-				$customer_data = $customer->getOrigData();
-				unset($customer_data['password_hash']);
+				$customer_data = Mage::helper('tinkerapi')->getCustomerData($user_id);
 				echo json_encode($customer_data);	
 			}
 		}

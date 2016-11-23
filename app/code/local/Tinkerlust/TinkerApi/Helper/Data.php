@@ -34,5 +34,32 @@
 			header('Content-type: application/json');
 			echo $data;
 		}
+
+		public function getCustomerData($user_id){
+			$customer = Mage::getModel('customer/customer');
+			$customer->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
+			$customer->load($user_id);
+			$customer_data = $customer->getOrigData();
+			unset($customer_data['password_hash']);
+			return $customer_data;
+		}
+
+		public function createCustomer(){
+			$customer = Mage::getModel('customer/customer');
+			$customer->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
+			$data = array('email'=>'dodol_ipret@yahoo.come','firstname' => '', 'lastname' => 'ipret', 'password' => '2002217');
+			$customer->setData($data);
+			$return = array();
+			try {
+				$customer->save();
+				$return['status'] = true;
+				$return['data'] = $customer;
+			}	
+			catch(Exception $ex){
+				$return['status'] = false;
+				$return['data'] = $ex->getMessage();
+			}
+			return $return;
+		}
 	}
  ?>

@@ -25,7 +25,7 @@
 				$products->joinField('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'left');
 				$products->addFieldToFilter('category_id',$params['category_id']);
 			}
-			
+			//TODO: [Tech Debt] Make it parameterized
 			$products->addAttributeToSelect('name');
 			$products->addAttributeToSelect('description');
 			$products->addAttributeToSelect('certificate');
@@ -50,11 +50,21 @@
 		}
 
 		public function customerAction(){
+			
 			$params = $this->getRequest()->getParams();
-			$baseEndPoint = 'tinkerapi/processoauth2/customer';
-			$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
-			$this->helper->returnJson($restData);
+			
+			if ($this->getRequest()->isGet()){
+				$baseEndPoint = 'tinkerapi/processoauth2/customer';
+				$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+				$this->helper->returnJson($restData);
+			}
+
+			else if($this->getRequest()->isPost() ){
+				$baseEndPoint = 'tinkerapi/processoauth2/createcustomer';
+				$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			}
 		}
+
 		
 	}
 ?>
