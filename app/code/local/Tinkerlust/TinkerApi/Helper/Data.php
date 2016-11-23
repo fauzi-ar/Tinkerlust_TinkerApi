@@ -47,7 +47,7 @@
 		public function createCustomer(){
 			$customer = Mage::getModel('customer/customer');
 			$customer->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
-			$data = array('email'=>'dodol_ipret@yahoo.come','firstname' => '', 'lastname' => 'ipret', 'password' => '2002217');
+			$data = array('email'=>'fuzzy.ar+123@gmail.com','firstname' => '', 'lastname' => 'ipret', 'password' => '2002217');
 			$customer->setData($data);
 			$return = array();
 			try {
