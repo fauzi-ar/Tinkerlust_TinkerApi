@@ -46,7 +46,7 @@
 			foreach ($products as $product){
 				$data[] = $product->getData();
 			}
-			$this->buildJson($data);
+			$this->helper->buildJson($data);
 		}
 
 		public function customerAction(){
