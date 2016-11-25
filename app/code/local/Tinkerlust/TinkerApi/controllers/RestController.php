@@ -25,8 +25,11 @@
 				$products->joinField('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'left');
 				$products->addFieldToFilter('category_id',$params['category_id']);
 			}
+			
 			//TODO: [Tech Debt] Make it parameterized
-			$products->addAttributeToSelect('name');
+			$products->addAttributeToSelect('*');
+/*			$products->addAttributeToSelect('name');
+			$products->addAttributeToSelect('short_description');						
 			$products->addAttributeToSelect('description');
 			$products->addAttributeToSelect('certificate');
 			$products->addAttributeToSelect('condition');
@@ -35,11 +38,13 @@
 			$products->addAttributeToSelect('color');
 			$products->addAttributeToSelect('brand');
 			$products->addAttributeToSelect('material');
-			$products->addAttributeToSelect('is_saleable');
+			$products->addAttributeToSelect('is_salable');
 			$products->addAttributeToSelect('price');
+			$products->addAttributeToSelect('size');
+			$products->addAttributeToSelect('qty');
 			$products->addAttributeToSelect('image');
 			$products->addAttributeToSelect('small_image');
-			$products->addAttributeToSelect('thumbnail');
+			$products->addAttributeToSelect('thumbnail');*/
 
 			$data = [];
 
