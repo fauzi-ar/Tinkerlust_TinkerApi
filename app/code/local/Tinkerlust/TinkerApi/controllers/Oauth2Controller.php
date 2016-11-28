@@ -7,8 +7,24 @@
 	  	{
 	  		$this->helper = Mage::helper('tinkerapi');
 	  	}		
+
+		private function force_request_method($method){
+			if ($method == 'GET'){
+				if (!$this->getRequest()->isGet()){
+					$this->helper->buildJson('Access Denied. Please use GET method for your request.',false);
+					die();
+				}
+			}
+			else if ($method == 'POST'){
+				if (!$this->getRequest()->isPost()){
+					$this->helper->buildJson('Access Denied. Please use POST method for your request.',false);
+					die();
+				}	
+			}
+		}
 	
 		public function loginAction(){
+			$this->force_request_method('POST');
 			$params = $this->getRequest()->getParams();
 			$params['grant_type'] = 'password';
 			$baseEndPoint = 'tinkerapi/processoauth2/login';
@@ -16,25 +32,47 @@
 			$this->helper->returnJson($restData);
 		}
 
+		//TODO: Make it POST only
 		public function registerAction(){
+			$this->force_request_method('POST');
 			$params = $this->getRequest()->getParams();
 			$params['grant_type'] = 'client_credentials';
-			$baseEndPoint = 'tinkerapi/processoauth2/register';
-			if ($register_access_token = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST')){
-				//register customer
-				$customer = $this->helper->createCustomer();
+			$baseEndPoint = 'tinkerapi/processoauth2/getaccesstokenforregistration';
+			//process the oauth
+			$tokenDataJSON = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$tokenData = JSON_decode($tokenDataJSON);
+			
+			//if authorization succeed (using client_credentials), create customer
+			if (isset($tokenData->access_token)){
+				//make sure that name, email, and password is filled
+				if (isset($params['name']) && isset($params['email']) && isset($params['password'])){
+					//fill up registration Data based on POST params;
+					$registrationData = [];
+					$nameArray = explode(" ", $params['name']);
+					$registrationData['firstname'] = array_shift($nameArray);
+					$registrationData['lastname'] = implode($nameArray);
+					$registrationData['email'] = $params['email'];
+					$registrationData['password'] = $params['password'];
 
-				if ($customer['status'] == true){
-					var_dump($customer['data']);
+					$customerCreate = $this->helper->createCustomer($registrationData);
+					//if customer creation succeed
+					if ($customerCreate['status'] == true){
+						$params['grant_type'] = 'password';
+						$params['username'] = $params['email'];
+						$baseEndPoint = 'tinkerapi/processoauth2/login';
+						$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+						$this->helper->returnJson($restData);
+					}
+					else {//if registration failed
+						$this->helper->buildJson($customerCreate['message'],false);
+					}	
 				}
-				else {
-					echo $customer['data']; 
+				else{//if Name, Email, or Password is missing
+					$this->helper->buildJson("Registration Data is incomplete. Make sure [name], [email], [password] parameters are present.",false);
 				}
-				//get access token with login credentials;
 			}
-			else {
-				//somethingwong
-				echo 'error';
+			else { //if client_id or client_secret is wrong
+				$this->helper->returnJson($tokenDataJSON);
 			}
 			
 			//$this->helper->returnJson($restData);

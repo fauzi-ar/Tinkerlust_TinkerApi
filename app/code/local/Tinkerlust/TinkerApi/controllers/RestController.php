@@ -55,19 +55,13 @@
 		}
 
 		public function customerAction(){
-			
+			$this->force_request_method('POST');
+			$this->force_access_token();
 			$params = $this->getRequest()->getParams();
-			
-			if ($this->getRequest()->isGet()){
-				$baseEndPoint = 'tinkerapi/processoauth2/customer';
-				$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
-				$this->helper->returnJson($restData);
-			}
 
-			else if($this->getRequest()->isPost() ){
-				$baseEndPoint = 'tinkerapi/processoauth2/createcustomer';
-				$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
-			}
+			$baseEndPoint = 'tinkerapi/processoauth2/customer';
+			$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($restData);
 		}
 
 		

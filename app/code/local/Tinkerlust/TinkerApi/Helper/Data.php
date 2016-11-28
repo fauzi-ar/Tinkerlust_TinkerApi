@@ -14,7 +14,7 @@
 			}
 
 			curl_setopt($ch, CURLOPT_URL,$path);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json','Content-Type: application/x-www-form-urlencoded'));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
 			curl_setopt($ch, CURLOPT_FAILONERROR,1);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
@@ -44,20 +44,19 @@
 			return $customer_data;
 		}
 
-		public function createCustomer(){
+		public function createCustomer($registrationData = null){
 			$customer = Mage::getModel('customer/customer');
 			$customer->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
-			$data = array('email'=>'fuzzy.ar+123@gmail.com','firstname' => '', 'lastname' => 'ipret', 'password' => '2002217');
-			$customer->setData($data);
+			$customer->setData($registrationData);
 			$return = array();
 			try {
 				$customer->save();
 				$return['status'] = true;
-				$return['data'] = $customer;
+				$customer->sendNewAccountEmail('registered','',Mage::app()->getStore()->getId());
 			}	
 			catch(Exception $ex){
 				$return['status'] = false;
-				$return['data'] = $ex->getMessage();
+				$return['message'] = $ex->getMessage();
 			}
 			return $return;
 		}

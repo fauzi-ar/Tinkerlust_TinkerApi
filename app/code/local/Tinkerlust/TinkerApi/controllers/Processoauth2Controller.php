@@ -18,12 +18,9 @@
 			$this->_server->addGrantType(new OAuth2_GrantType_UserCredentials($this->_storage));
 			$this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->send();
 		}
-		public function registerAction(){
+		public function getaccesstokenforregistrationAction(){
 			$this->_server->addGrantType(new OAuth2_GrantType_ClientCredentials($this->_storage,['access_lifetime' => 60,'id_lifetime' => 60]));
-			$result = $this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->getParameters();
-			if (isset($result['access_token'])){
-				echo $result['access_token'];
-			}
+			$this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->send();			
 		}
 		public function refreshAction(){
 			$this->_server->addGrantType(new OAuth2_GrantType_RefreshToken($this->_storage,['always_issue_new_refresh_token' => true]));
