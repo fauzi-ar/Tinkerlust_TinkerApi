@@ -7,6 +7,21 @@
 	  	{
 	  		$this->helper = Mage::helper('tinkerapi');
 	  	}
+
+	  	private function force_request_method($method){
+			if ($method == 'GET'){
+				if (!$this->getRequest()->isGet()){
+					$this->helper->buildJson('Access Denied. Please use GET method for your request.',false);
+					die();
+				}
+			}
+			else if ($method == 'POST'){
+				if (!$this->getRequest()->isPost()){
+					$this->helper->buildJson('Access Denied. Please use POST method for your request.',false);
+					die();
+				}	
+			}
+		}
 		
 		public function productsAction()
 		{
@@ -54,9 +69,9 @@
 			$this->helper->buildJson($data);
 		}
 
+
 		public function customerAction(){
-			$this->force_request_method('POST');
-			$this->force_access_token();
+			$this->force_request_method('GET');
 			$params = $this->getRequest()->getParams();
 
 			$baseEndPoint = 'tinkerapi/processoauth2/customer';

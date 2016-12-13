@@ -15,27 +15,30 @@
 
 		public function checkClientCredentials($client_id, $client_secret = null){
 			$client = Mage::getModel('oauth/consumer')->load($client_id,'key');
-			if ($client_secret == $client->getData('secret')){
-				return true;
+			if ($client != null){
+				if ($client_secret == $client->getData('secret')) return true;
+				else return false;
 			}
-			else {
-				return false;
-			}
+			else return false;
 		}
 
 		public function isPublicClient($client_id){
-			return true;
+			//always return false
+			return false;
 		}
 
 		public function getClientDetails($client_id){
+			//we don't need no client details!
 			return null;
 		}
 
 		public function getClientScope($client_id){
-			return 'lorem scope';
+			//we don't know what it Scope is.
+			return null;
 		}
 
 		public function checkRestrictedGrantType($client_id, $grant_type){
+			//asume all clients can take any grant type
 			return true;
 		}
 
