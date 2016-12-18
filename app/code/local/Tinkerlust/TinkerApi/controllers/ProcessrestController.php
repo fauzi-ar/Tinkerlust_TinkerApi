@@ -1,5 +1,5 @@
 <?php 
-	class Tinkerlust_TinkerApi_ProcessRestController extends Mage_Core_Controller_Front_Action
+	class Tinkerlust_TinkerApi_ProcessrestController extends Mage_Core_Controller_Front_Action
 	{
 
 		private $_server;
