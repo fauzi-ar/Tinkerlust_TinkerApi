@@ -14,7 +14,7 @@
 			}
 
 			curl_setopt($ch, CURLOPT_URL,$path);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json','Content-Type: application/x-www-form-urlencoded'));
 			curl_setopt($ch, CURLOPT_FAILONERROR,1);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
@@ -24,24 +24,17 @@
 			return $returnValue;
 		}
 
-		public function buildJson($data, $status = true){
+		public function buildJson($data, $status = true, $message = null){
 			header('Content-type: application/json');
-			$message = ($status == true) ? 'Success' : 'Failed';
+			$message = $message?:(($status == true) ? 'Success' : 'Failed');
 			echo json_encode(array('data'=>$data,'status'=>$status,'message'=>$message));
+			die();
 		}
 
 		public function returnJson($data){
 			header('Content-type: application/json');
 			echo $data;
-		}
-
-		public function getCustomerData($user_id){
-			$customer = Mage::getModel('customer/customer');
-			$customer->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
-			$customer->load($user_id);
-			$customer_data = $customer->getOrigData();
-			unset($customer_data['password_hash']);
-			return $customer_data;
+			die();
 		}
 
 		public function createCustomer($registrationData = null){
@@ -60,5 +53,7 @@
 			}
 			return $return;
 		}
+
+
 	}
  ?>

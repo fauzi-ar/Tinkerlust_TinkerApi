@@ -11,13 +11,13 @@
 	  	private function force_request_method($method){
 			if ($method == 'GET'){
 				if (!$this->getRequest()->isGet()){
-					$this->helper->buildJson('Access Denied. Please use GET method for your request.',false);
+					$this->helper->buildJson(null,false,'Access Denied. Please use GET method for your request.');
 					die();
 				}
 			}
 			else if ($method == 'POST'){
 				if (!$this->getRequest()->isPost()){
-					$this->helper->buildJson('Access Denied. Please use POST method for your request.',false);
+					$this->helper->buildJson(null,false,'Access Denied. Please use POST method for your request.');
 					die();
 				}	
 			}
@@ -25,48 +25,50 @@
 		
 		public function productsAction()
 		{
-
+			$this->force_request_method('GET');
 			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'tinkerapi/processrest/products';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'GET');
+			$this->helper->returnJson($result);
+		}
 
-			$limit = (isset($params['limit'])) ? $params['limit'] : 10; 
-			$products = Mage::getModel('catalog/product')->getCollection()->setPageSize($limit)->setCurPage(1);
+		public function categoryAction(){
+			$this->force_request_method('GET');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'tinkerapi/processrest/category';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'GET');
+			$this->helper->returnJson($result);
+		}
 
-			if (sizeof($params) == 1 && is_int(array_keys($params)[0])){
-				$products->addFieldToFilter('entity_id',array_keys($params)[0]);
-			}
+		public function categoriesAction(){
+			$this->force_request_method('GET');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'tinkerapi/processrest/categories';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'GET');
+			$this->helper->returnJson($result);
+		}
 
-			if (isset($params['category_id']))
-			{
-				$products->joinField('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'left');
-				$products->addFieldToFilter('category_id',$params['category_id']);
-			}
+		public function featuredSellerAction()
+		{
+			//TODO: When the new vendor system is UP, change this.
+			$featuredSellerHtml = $this->getLayout()->createBlock('cms/block')->setBlockId('featured_seller_slider')->toHtml(); 
 			
-			//TODO: [Tech Debt] Make it parameterized
-			$products->addAttributeToSelect('*');
-/*			$products->addAttributeToSelect('name');
-			$products->addAttributeToSelect('short_description');						
-			$products->addAttributeToSelect('description');
-			$products->addAttributeToSelect('certificate');
-			$products->addAttributeToSelect('condition');
-			$products->addAttributeToSelect('regular_price_with_tax');
-			$products->addAttributeToSelect('dustbag');
-			$products->addAttributeToSelect('color');
-			$products->addAttributeToSelect('brand');
-			$products->addAttributeToSelect('material');
-			$products->addAttributeToSelect('is_salable');
-			$products->addAttributeToSelect('price');
-			$products->addAttributeToSelect('size');
-			$products->addAttributeToSelect('qty');
-			$products->addAttributeToSelect('image');
-			$products->addAttributeToSelect('small_image');
-			$products->addAttributeToSelect('thumbnail');*/
+			$result = null;			
+			preg_match_all('/href="([\S]+?)"[\s\S]*?<h3>(.+?)<\/h3>\s*<p>(.+?)<\/p>[\s\S]*?<img.*src="(.+?)"/',$featuredSellerHtml,$matches);
+			$size = sizeof($matches[0]);
+			$featured_sellers = array();
+			for ($i = 0;$i<$size;$i++){
+				$featured_seller = array(
+					'name' => $matches[2][$i],	
+					'url' => $matches[1][$i],
+					'job' => $matches[3][$i],
+					'image' => $matches[4][$i],
+				);
 
-			$data = [];
-
-			foreach ($products as $product){
-				$data[] = $product->getData();
+				$featured_sellers[$i] = $featured_seller;
 			}
-			$this->helper->buildJson($data);
+
+			$this->helper->buildJson($featured_sellers);
 		}
 
 
@@ -74,9 +76,9 @@
 			$this->force_request_method('GET');
 			$params = $this->getRequest()->getParams();
 
-			$baseEndPoint = 'tinkerapi/processoauth2/customer';
-			$restData = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
-			$this->helper->returnJson($restData);
+			$baseEndPoint = 'tinkerapi/processrest/customer';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
 		}
 
 		
