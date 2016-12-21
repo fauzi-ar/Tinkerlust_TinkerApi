@@ -38,13 +38,14 @@
 		}
 
 		public function createCustomer($registrationData = null){
-			$customer = Mage::getModel('customer/customer');
-			$customer->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
-			$customer->setData($registrationData);
+			$customer = Mage::getModel('customer/customer')
+						->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+						->setData($registrationData);
 			$return = array();
 			try {
 				$customer->save();
 				$return['status'] = true;
+				$return['message'] = 'Success';
 				$customer->sendNewAccountEmail('registered','',Mage::app()->getStore()->getId());
 			}	
 			catch(Exception $ex){
@@ -54,6 +55,28 @@
 			return $return;
 		}
 
+		public function sendForgotPasswordEmail($email = null){
+			$customer = Mage::getModel('customer/customer')
+			    		->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
+			    		->loadByEmail($email);
+			if ($customer->getId()) {
+			    try {
+			        $newResetPasswordLinkToken =  Mage::helper('customer')->generateResetPasswordLinkToken();
+			        $customer->changeResetPasswordLinkToken($newResetPasswordLinkToken);
+			        $customer->sendPasswordResetConfirmationEmail();
+			        $return['status']	= true;
+			        $return['message']  = 'Success';
 
+			    } catch (Exception $exception) {
+					$return['status']	= false;
+			        $return['message']  = $ex->getMessage();
+			    }
+			    return $return;
+			}
+			else {
+				$return['status'] = false;
+				$return['message']  = 'Email is not registered.';
+			}
+		}
 	}
  ?>

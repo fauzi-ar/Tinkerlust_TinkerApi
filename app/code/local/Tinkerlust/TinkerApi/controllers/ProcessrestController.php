@@ -139,5 +139,57 @@
 			$this->helper->buildJson($customer_data,true);
 		}
 
+		public function cartGETAction(){
+			$this->check_access_token();
+			$token = $this->_server->getAccessTokenData(OAuth2_Request::createFromGlobals());
+			
+			$user_id = $token['user_id'];
+
+			$quote = Mage::getModel('sales/quote')->loadByCustomer($user_id);
+
+			if ($quote) {
+			    $cartProducts = array();
+			    foreach ($quote->getAllItems() as $item) { 
+			        $product = $item->getProduct(); 
+			        $cartProducts[] = array(
+			            'product_id' => $product->getId(),
+			            'sku' => $product->getSku(),
+			            'name' => $product->getName(),
+			            'category_ids' => $product->getCategoryIds(),
+			            'qty'	=> $item->getQty()
+			        );
+			    }
+			}
+			$this->helper->buildJson($cartProducts,true);	
+		}
+
+		public function addtocartAction(){
+			$this->check_access_token();
+			$token = $this->_server->getAccessTokenData(OAuth2_Request::createFromGlobals());
+			$user_id = $token['user_id'];
+			$params = $this->getRequest()->getParams();
+
+			$product_id = (is_numeric($params['add']))?$params['add']:null;
+			if ($product_id){
+				$_product = Mage::getModel('catalog/product')->load($product_id);
+				if ($_product->getId() != null){
+					try {
+						$quote = Mage::getModel('sales/quote')->loadByCustomer($user_id);
+						$quote->addProduct($_product);
+						$quote->save();
+						$this->helper->buildJson(null,true);
+					} catch(Mage_Core_Exception $e){
+						$this->helper->buildJson(null,false,"Cannot add product to cart, probably product is not available anymore.");
+					}
+				}
+				else {
+					$this->helper->buildJson(null,false,"Product with ID in the request doesn't exist.");
+				}
+			}
+			else {
+				$this->helper->buildJson(null,false,"Product ID is invalid or is not found");
+			}
+		}
+
 	}
  ?>

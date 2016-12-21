@@ -13,9 +13,13 @@
 			$this->_server->addGrantType(new OAuth2_GrantType_UserCredentials($this->_storage));
 			$this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->send();
 		}
-		public function getaccesstokenforregistrationAction(){
+		public function unlockAction(){
 			$this->_server->addGrantType(new OAuth2_GrantType_ClientCredentials($this->_storage));
 			$this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->send();			
+		}
+		public function forgotpasswordAction(){
+			$this->_server->addGrantType(new OAuth2_GrantType_ClientCredentials($this->_storage));
+			$this->_server->handleTokenRequest(OAuth2_Request::createFromGlobals())->send();	
 		}
 		public function refreshAction(){
 			$this->_server->addGrantType(new OAuth2_GrantType_RefreshToken($this->_storage,['always_issue_new_refresh_token' => true]));

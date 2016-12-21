@@ -37,7 +37,7 @@
 			$this->force_request_method('POST');
 			$params = $this->getRequest()->getParams();
 			$params['grant_type'] = 'client_credentials';
-			$baseEndPoint = 'tinkerapi/processoauth2/getaccesstokenforregistration';
+			$baseEndPoint = 'tinkerapi/processoauth2/unlock';
 			//process the oauth
 			$tokenDataJSON = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
 			$tokenData = JSON_decode($tokenDataJSON);
@@ -76,6 +76,33 @@
 			}
 			
 			//$this->helper->returnJson($restData);
+		}
+
+		public function forgotpasswordAction(){
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$params['grant_type'] = 'client_credentials';
+			$baseEndPoint = 'tinkerapi/processoauth2/unlock';
+			//process the oauth
+			$tokenDataJSON = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$tokenData = JSON_decode($tokenDataJSON);
+			
+			//if authorization succeed (using client_credentials), call rest forgotpassword
+			if (isset($tokenData->access_token)){
+				if (isset($params['email'])){
+					$email = $params['email'];
+					if (!Zend_Validate::is($email, 'EmailAddress')) {
+					    $this->helper->buildJson(null,false,"Email is not the right format.");
+					}
+					else {
+						$sendEmailStatus = $this->helper->sendForgotPasswordEmail($email);
+						$this->helper->buildJson(null,$sendEmailStatus['status'],$sendEmailStatus['message']);
+					}
+				}
+				else {
+					$this->helper->buildJson(null,false,"Email is not present in REQUEST.");	
+				}
+			}
 		}
 
 		public function refreshAction(){

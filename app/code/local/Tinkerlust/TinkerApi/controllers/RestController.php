@@ -81,6 +81,30 @@
 			$this->helper->returnJson($result);
 		}
 
+		public function cartAction(){
+			if ($this->getRequest()->isGet()){
+				$params = $this->getRequest()->getParams();
+				$baseEndPoint = 'tinkerapi/processrest/cartGET';
+				$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+				$this->helper->returnJson($result);
+			}
+			else if ($this->getRequest()->isPost()) {
+				$params = $this->getRequest()->getParams();
+				if (array_keys($params)[0] == 'add'){
+					$baseEndPoint = 'tinkerapi/processrest/addtocart';
+					$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+					$this->helper->returnJson($result);
+				}
+			}
+		}
+
+		public function forgotpasswordAction(){
+			$this->force_request_method('POST');
+			$params = $this->getRequest()->getParams();
+			$baseEndPoint = 'tinkerapi/processrest/forgotpassword';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
 		
 	}
 ?>
