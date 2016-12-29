@@ -71,6 +71,14 @@
 			$this->helper->buildJson($featured_sellers);
 		}
 
+		public function itemforsaleAction(){
+			$this->force_request_method('GET');
+			$params = $this->getRequest()->getParams();
+
+			$baseEndPoint = 'tinkerapi/processrest/itemforsale';
+			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+			$this->helper->returnJson($result);
+		}
 
 		public function customerAction(){
 			$this->force_request_method('GET');
@@ -79,6 +87,22 @@
 			$baseEndPoint = 'tinkerapi/processrest/customer';
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
 			$this->helper->returnJson($result);
+		}
+
+		public function subscribeAction(){
+			if ($this->getRequest()->isGet()){
+				$params = $this->getRequest()->getParams();
+				$baseEndPoint = 'tinkerapi/processrest/subscribedby';
+				$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+				$this->helper->returnJson($result);
+			}	
+			else if ($this->getRequest()->isPost()) {
+				$params = $this->getRequest()->getParams();
+				$baseEndPoint = 'tinkerapi/processrest/subscribe';
+				$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+				$this->helper->returnJson($result);	
+			}
+			
 		}
 
 		public function cartAction(){
@@ -90,20 +114,35 @@
 			}
 			else if ($this->getRequest()->isPost()) {
 				$params = $this->getRequest()->getParams();
-				if (array_keys($params)[0] == 'add'){
-					$baseEndPoint = 'tinkerapi/processrest/addtocart';
-					$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
-					$this->helper->returnJson($result);
-				}
+				$baseEndPoint = 'tinkerapi/processrest/addtocart';
+				$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+				$this->helper->returnJson($result);
 			}
 		}
 
-		public function forgotpasswordAction(){
-			$this->force_request_method('POST');
+		public function wishlistAction(){
+			if ($this->getRequest()->isGet()){
+				$params = $this->getRequest()->getParams();
+				$baseEndPoint = 'tinkerapi/processrest/wishlistGET';
+				$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+				$this->helper->returnJson($result);
+			}
+			else if ($this->getRequest()->isPost()) {
+				$params = $this->getRequest()->getParams();	
+				$baseEndPoint = 'tinkerapi/processrest/wishlistPOST';
+				$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
+				$this->helper->returnJson($result);
+			}
+		}
+
+		public function searchAction(){
+			$this->force_request_method('GET');
 			$params = $this->getRequest()->getParams();
-			$baseEndPoint = 'tinkerapi/processrest/forgotpassword';
+			$baseEndPoint = 'tinkerapi/processrest/search';
 			$result = $this->helper->curl(Mage::getBaseUrl() . $baseEndPoint,$params,'POST');
 			$this->helper->returnJson($result);
+
+			
 		}
 		
 	}
